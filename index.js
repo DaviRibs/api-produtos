@@ -57,6 +57,37 @@ app.get('/produtos', async (req, res) => {
     }
 })
 
+app.get('/produtos/:id', async (req, res) => {
+    const {id} = req.params;
+
+    try {
+        const produto = await pool.query(`
+            SELECT * FROM produtos WHERE ID = ${id}
+            `)
+            if(!produto.rows.length){
+                return res.status(404).send('Produto não encontrado')
+            }
+            return res.send(produto.rows[0])
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send('Erro ao buscar produto')
+    }
+})
+
+app.delete('/produtos/:id', async (req, res) => {
+const { id } = req.params;
+try {
+    await pool.query(`
+        DELETE FROM produtos WHERE id = ${id}
+        `)
+        return res.status(202).send('Produto deletado com sucesso')
+} catch (error) {
+    console.error(error)
+    return res.status(500).send('Erro ao deletar produto')
+    
+}
+})
+
 
 app.listen(port, () => {
     console.log(`O servidor está rodando na porta ${port}`)
