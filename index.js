@@ -1,22 +1,23 @@
 const express = require('express')
 const app = express()
 const port = 6579
+require('dotenv').config()
 const { Pool } = require('pg')
 
 const pool = new Pool({
-    user: 'postgres.gyiinakduhztygdywfuv',
-    host: 'aws-0-sa-east-1.pooler.supabase.com',
-    database: 'postgres',
-    password: '94847414',
-    port: 5432
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASS,
+    port:     process.env.DB_PORT
 })
 
 app.use(express.json())
 
 app.post('/produtos', async (req, res) => {
-    const { nome, preco, categoria, imagem_url } = req.body
+    const { nome, preco, categoria, image_url } = req.body
 
-    if (!nome || !preco || !categoria || !imagem_url) {
+    if (!nome || !preco || !categoria || !image_url) {
         return res.status(400).send('Todos os campos são obrigatórios')
     }
     if (nome.length > 100) {
@@ -31,14 +32,10 @@ app.post('/produtos', async (req, res) => {
     try {
         const produto = await pool.query(`
         INSERT INTO produtos (nome, preco, categoria, image_url)
-        VALUES (
-        '${nome}',
-        ${preco},
-        '${categoria}',
-        '${imagem_url}'
-        )
+        VALUES ($1, $2, $3, $4)
         RETURNING *
-    `)
+        `, [nome, preco, categoria, image_url])
+    
         res.status(201).send(produto.rows[0])
     } catch (error) {
         console.error(error)
@@ -76,7 +73,17 @@ app.get('/produtos/:id', async (req, res) => {
 
 app.delete('/produtos/:id', async (req, res) => {
 const { id } = req.params;
+
+
 try {
+
+    const produto = await pool.query(`
+        SELECT * FROM produtos WHERE id = ${id}
+        `)
+        if(!produto.rows.length){
+            return res.status(404).send('Produto não encontrado')
+        }
+
     await pool.query(`
         DELETE FROM produtos WHERE id = ${id}
         `)
