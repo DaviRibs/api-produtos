@@ -59,8 +59,9 @@ app.get('/produtos/:id', async (req, res) => {
 
     try {
         const produto = await pool.query(`
-            SELECT * FROM produtos WHERE ID = ${id}
-            `)
+            SELECT * FROM produtos WHERE ID = $1
+            `, [id])
+
             if(!produto.rows.length){
                 return res.status(404).send('Produto não encontrado')
             }
@@ -78,15 +79,16 @@ const { id } = req.params;
 try {
 
     const produto = await pool.query(`
-        SELECT * FROM produtos WHERE id = ${id}
-        `)
+        SELECT * FROM produtos WHERE id = $1
+        `, [id])
+
         if(!produto.rows.length){
             return res.status(404).send('Produto não encontrado')
         }
 
     await pool.query(`
-        DELETE FROM produtos WHERE id = ${id}
-        `)
+        DELETE FROM produtos WHERE id = $1
+        `, [id])
         return res.status(202).send('Produto deletado com sucesso')
 } catch (error) {
     console.error(error)
