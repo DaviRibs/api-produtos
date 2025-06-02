@@ -11,6 +11,18 @@ try {
 
 }
 
+async function createProduto(req, res){
+    try {
+        const produto = await produtosModel.createProduto(req.body)
+        return res.status(201).send(produto)
+    } catch (error) {
+        console.error(error)
+        return res.status(500).send('Erro ao criar produto')
+    }
+}
+
+
 module.exports = {
-getProdutos
+getProdutos,
+createProduto
 }
