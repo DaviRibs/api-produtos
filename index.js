@@ -1,16 +1,9 @@
 const express = require('express')
 const app = express()
 const port = 6579
-require('dotenv').config()
-const { Pool } = require('pg')
+const pool = require('./src/models/database')
+const produtosController = require('./src/controllers/produtos')
 
-const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASS,
-    port: process.env.DB_PORT
-})
 
 app.use(express.json())
 
@@ -44,17 +37,7 @@ app.post('/produtos', async (req, res) => {
     }
 })
 
-app.get('/produtos', async (req, res) => {
-    try {
-        const produtos = await pool.query('SELECT * FROM produtos')
-
-        return res.status(200).send(produtos.rows)
-        
-    } catch (error) {
-        console.error(error)
-        return res.status(500).send('Erro ao buscar produtos')
-    }
-})
+app.get('/produtos', produtosController.getProdutos)
 
 app.get('/produtos/:id', async (req, res) => {
     const { id } = req.params;
