@@ -28,3 +28,5 @@ const Produtos = sequelize.define('produtos', {
      }
 
 })
+
+module.exports = Produtos
