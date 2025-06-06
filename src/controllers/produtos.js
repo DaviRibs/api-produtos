@@ -1,8 +1,8 @@
-const produtosModel = require('../models/produtos')
+const {Produtos} = require('../models')
 
 async function getProdutos(req, res){
 try {
-    const produtos = await produtosModel.getProdutos()
+    const produtos = await Produtos.findAll()
     return res.send(produtos)
 } catch (error) {
     console.error(error)
@@ -13,9 +13,8 @@ try {
 
 async function createProduto(req, res){
     try {
-       
-        const produto = await produtosModel.createProduto(req.body)
-        return res.status(201).send(produto)
+        const produtos = await Produtos.create(req.body)
+        return res.status(201).send(produtos)
     } catch (error) {
         console.error(error)
         return res.status(500).send('Erro ao criar produto')
@@ -25,9 +24,10 @@ async function createProduto(req, res){
 async function deleteProduto(req, res){
     const { id } =req.params;
     try {
-        await produtosModel.deleteProduto(id)
+        await Produtos.destroy()
 
         return res.status(202).send('Produto deletado com sucesso')
+
     } catch (error) {
         console.error(error)
         return res.status(500).send('Erro ao deletar produto')

@@ -1,5 +1,6 @@
 const sequelize = require('../config/database')
 const Users = require('./users')
+const Produtos = require("./produtos")
 
 sequelize.sync({alter: true})
 
@@ -9,7 +10,8 @@ sequelize.sync({alter: true})
 ))
 
 module.exports = {
-    Users
+    Users,
+    Produtos
 }
     
 
