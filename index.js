@@ -11,6 +11,7 @@ app.use(produtosRoutes)
 app.use(usersRoutes)
 app.use(authRoutes)
 
+
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`)
 })
